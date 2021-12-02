@@ -1,0 +1,15 @@
+.header{
+    
+    
+    display:block;
+    background-color:purple;
+    width:100%;
+    height:100px;
+    
+}
+#heading{
+    text-align:center;
+    font-size:40px;
+    color:white;
+    line-height:2.0;
+}
