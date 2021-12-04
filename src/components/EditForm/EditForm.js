@@ -3,10 +3,11 @@ import { Form, Button } from "react-bootstrap";
 import "./form.css";
 import {Authentication} from '../Services';
 
-export default class StudentForm extends Component {
+export default class EditForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      id: this.props.match.params.id,
       FullName: "",
       street: "",
       city: "",
@@ -14,13 +15,24 @@ export default class StudentForm extends Component {
       grade: "",
       state:"",
       validMsg: "",
+      studentData:[],
      
 
     };
     this.onSubmit = this.onSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }
+  async componentDidMount() {
+    let response = await fetch(`http://localhost:8080/student/${this.state.id}`);
+    let data = await response.json();
+    console.log(data)
+    this.setState({ FullName: data.studentName , street:data.address.street , city:data.address.city, zipCode:data.address.zipCode,
+       state :data.address.state,grade:data.grade}
+     
+    )}
+  
   handleChange(event) {
+    console.log(this.props);
     this.setState({
       [event.target.name]: event.target.value,
     });
@@ -39,7 +51,8 @@ export default class StudentForm extends Component {
     }
     else{
         const newStudent={
-          studentName:this.state.FullName,
+           
+           studentName:this.state.FullName,
            address:{
             street:this.state.street,
             city:this.state.city,
@@ -49,9 +62,9 @@ export default class StudentForm extends Component {
           grade:this.state.grade
         };
        
-        Authentication.addNewStudent(newStudent)
+        Authentication.updateStudent(newStudent,this.state.id)
         .then((response)=>{
-         if(response.status===201){
+         if(response.status===204){
            this.props.history.push(`/load`);
 
          }
@@ -66,7 +79,10 @@ export default class StudentForm extends Component {
   }
   render() {
     return (
+      <div>
+      <h1>Edit Student Form </h1>
       <Form id="studentform">
+        
         <Form.Group className="mb-3" controlId="formName">
           <Form.Label>Student Name</Form.Label>
           <Form.Control isrequired
@@ -121,9 +137,10 @@ export default class StudentForm extends Component {
           />
         </Form.Group>
         <Button variant="primary" type="submit" onClick={this.onSubmit}>
-          Add Student
+          Submit
         </Button>
       </Form>
+      </div>
     );
   }
 }

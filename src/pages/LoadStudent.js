@@ -14,22 +14,31 @@ class LoadStudent extends Component {
       zipCode: "",
       grade: "",
       state: "",
+      show: false,
       studentData: [],
+      message:null
     };
-    this.UpdateStudent = this.UpdateStudent.bind(this);
+    this.updateStudent = this.updateStudent.bind(this);
     this.DeleteStudent = this.DeleteStudent.bind(this);
+  }
 
+  updateStudent(id) {
+    console.log(id);
+    if (id) {
+      this.setState({ id: id });
+    }
+    this.props.history.push(`/${id}`);
   }
-  UpdateStudent(id) {
-      console.log(id);
-      this.setState({id:id},()=>{
-        
-      })
-
-  }
-  DeleteStudent(id){
-      console.log(id);
-  }
+  DeleteStudent(id) {
+   
+   console.log(id);
+   Authentication.deleteStudent(id).then((response)=>{
+    this.setState({message:`Deleted student Info ${id} Sucessfully`})
+   if(response.status===200){
+   this.componentDidMount();
+   }
+   })
+ }
   async componentDidMount() {
     let response = await fetch("http://localhost:8080/student");
     let data = await response.json();
@@ -41,6 +50,7 @@ class LoadStudent extends Component {
     return (
       <div>
         <h1>Student Details </h1>
+        {this.state.message && <div className="alert alert-success">{this.state.message}</div>}
         <Table striped bordered hover size="sm" id="table">
           <thead>
             <tr>
@@ -66,12 +76,18 @@ class LoadStudent extends Component {
                 <td>{student.address.zipCode}</td>
                 <td>{student.grade}</td>
                 <td>
-                  <Button variant="secondary" onClick={() => this.UpdateStudent(student.id)}>
+                  <Button
+                    variant="secondary"
+                    onClick={() => this.updateStudent(student.id)}
+                  >
                     Edit
                   </Button>{" "}
                 </td>
                 <td>
-                  <Button variant="secondary" onClick={() => this.DeleteStudent(student.id)}>
+                  <Button
+                    variant="secondary"
+                    onClick={() => this.DeleteStudent(student.id)}
+                  >
                     Delete
                   </Button>{" "}
                 </td>
