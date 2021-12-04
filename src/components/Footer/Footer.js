@@ -5,7 +5,7 @@ export default class Footer extends Component {
   
   render() {
     return (
-      <header class="footer">
+      <header className="footer">
                <h3 >
                    {`Created by Jyoti Das   ${new Date().getFullYear()}`}
                    
